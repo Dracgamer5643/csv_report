@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV_REPORT || Home</title>
+    <link rel="stylesheet" href={% static "home.css" %}>
+
+</head>
+<body>
+    <div class="header">
+    </div>
+    <main>
+        <form id="myForm">
+            <h3>Upload CSV File to get Summary Report</h3>
+            <label class="custom_input" for="file">Upload File</label>
+            <input type="file" name="file" id="file">
+            <br>
+            <button onclick=submitForm() type="submit">Submit</button>
+        </form>
+    </main>
+</body>
+
+<script>
+    function submitForm() {
+        event.preventDefault();
+    
+        var formData = new FormData();
+        formData.append('file',  document.getElementById('file').files[0]);
+
+        fetch('', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            // Handle response data as needed
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+</html>
